@@ -58,6 +58,23 @@ h1, h2, h3, h4, h5,
   opacity: 0;
   visibility: hidden; }
 
+.column_1 {
+  float: left;
+  width: 35%;
+}
+
+.column_2 {
+  float: left;
+  width: 65%;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  height:50px;
+  content: "";
+  display: table;
+  clear: both;
+}
 .offcanvas-menu .site-wrap {
   height: 100%;
   width: 100%;
