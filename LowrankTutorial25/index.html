@@ -1,0 +1,831 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/x-icon" href="./favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Low Rank Strikes Back in Modern Foundation Models - A comprehensive tutorial by Prof. Zhangyang Atlas Wang covering low-rank techniques in large language models." />
+    <meta name="keywords" content="low rank, foundation models, LLM, machine learning, LoRA, GaLore, neural networks, deep learning" />
+    <meta name="author" content="Prof. Zhangyang Atlas Wang" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Low Rank Strikes Back in Modern Foundation Models" />
+    <meta property="og:description" content="A comprehensive tutorial exploring low-rank approximation techniques in large language models by Prof. Atlas Wang." />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:title" content="Low Rank Strikes Back in Modern Foundation Models" />
+    <meta property="twitter:description" content="A comprehensive tutorial exploring low-rank approximation techniques in large language models by Prof. Atlas Wang." />
+    
+    <title>Low Rank Strikes Back in Modern Foundation Models | Atlas Wang</title>
+    
+    <style>
+      /* Inline CSS to ensure it works with file:// URLs */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background: linear-gradient(135deg, #fef7f0 0%, #fdf2e9 100%);
+        min-height: 100vh;
+      }
+      
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+      
+      /* Header */
+      .header {
+        background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+        color: white;
+        padding: 2rem 0;
+        text-align: center;
+        margin-bottom: 3rem;
+      }
+      
+      .logo {
+        display: inline-block;
+        background: #fff;
+        color: #ea580c;
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        line-height: 80px;
+        font-size: 2rem;
+        font-weight: bold;
+        margin-bottom: 2rem;
+      }
+      
+      .main-title {
+        font-size: 3.5rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+      }
+      
+      .subtitle {
+        font-size: 1.5rem;
+        opacity: 0.9;
+        margin-bottom: 2rem;
+      }
+      
+      .speaker-info {
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 2rem;
+        margin: 2rem auto;
+        max-width: 600px;
+      }
+      
+      .speaker-name {
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+      }
+      
+      .speaker-details {
+        font-size: 1.1rem;
+        line-height: 1.8;
+      }
+      
+      .event-info {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+      
+      .event-item {
+        text-align: center;
+      }
+      
+      .event-label {
+        font-size: 0.9rem;
+        opacity: 0.8;
+        margin-bottom: 0.5rem;
+      }
+      
+      .event-value {
+        font-size: 1.2rem;
+        font-weight: 600;
+      }
+      
+      /* Description */
+      .description {
+        text-align: center;
+        font-size: 1.2rem;
+        margin: 3rem auto;
+        max-width: 800px;
+        color: #666;
+      }
+      
+      /* Buttons */
+      .button-group {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin: 3rem 0;
+        flex-wrap: wrap;
+      }
+      
+      .btn {
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: 10px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: transform 0.2s, box-shadow 0.2s;
+        cursor: pointer;
+      }
+      
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      }
+      
+      .btn-primary {
+        background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+        color: white;
+      }
+      
+      .btn-secondary {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        color: white;
+      }
+      
+      /* Sections */
+      .section {
+        margin: 4rem 0;
+      }
+      
+      .section-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 1rem;
+        color: #1f2937;
+      }
+      
+      .section-subtitle {
+        text-align: center;
+        font-size: 1.2rem;
+        color: #666;
+        margin-bottom: 3rem;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      
+      /* Tutorial Sections */
+      .tutorial-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin: 3rem 0;
+      }
+      
+      .tutorial-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        transition: transform 0.3s, box-shadow 0.3s;
+        border-left: 5px solid #ea580c;
+      }
+      
+      .tutorial-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      }
+      
+      .tutorial-number {
+        display: inline-block;
+        background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+        color: white;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 40px;
+        font-weight: bold;
+        margin-bottom: 1rem;
+      }
+      
+      .tutorial-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #1f2937;
+      }
+      
+      .tutorial-subtitle {
+        font-style: italic;
+        color: #ea580c;
+        margin-bottom: 1rem;
+      }
+      
+      .tutorial-description {
+        color: #666;
+        margin-bottom: 1.5rem;
+      }
+      
+      .tutorial-topics {
+        margin-bottom: 1.5rem;
+      }
+      
+      .topics-label {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #1f2937;
+      }
+      
+      .topic-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+      
+      .topic-tag {
+        background: #fef3c7;
+        color: #92400e;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+      
+      /* Key Techniques */
+      .techniques-section {
+        background: white;
+        border-radius: 20px;
+        padding: 3rem;
+        margin: 3rem 0;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      }
+      
+      .technique-category {
+        margin: 3rem 0;
+      }
+      
+      .category-header {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+      
+      .category-icon {
+        width: 40px;
+        height: 40px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+      }
+      
+      .category-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+      }
+      
+      .paper-card {
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 1.5rem;
+        transition: all 0.3s;
+      }
+      
+      .paper-card:hover {
+        background: white;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        transform: translateY(-2px);
+      }
+      
+      .paper-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: #1f2937;
+      }
+      
+      .paper-meta {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+      }
+      
+      .paper-authors {
+        color: #666;
+        font-weight: 500;
+      }
+      
+      .paper-venue {
+        background: #10b981;
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+      
+      .paper-year {
+        color: #666;
+        font-weight: 500;
+      }
+      
+      .paper-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s;
+      }
+      
+      .paper-link:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(234, 88, 12, 0.4);
+      }
+      
+      /* Acknowledgements */
+      .acknowledgements {
+        background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+        border-radius: 20px;
+        padding: 3rem;
+        margin: 3rem 0;
+        text-align: center;
+      }
+      
+      .ack-title {
+        font-size: 2rem;
+        font-weight: 600;
+        margin-bottom: 2rem;
+        color: #1f2937;
+      }
+      
+      .ack-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin: 2rem 0;
+      }
+      
+      .ack-person {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      }
+      
+      .ack-name {
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 0.5rem;
+      }
+      
+      .ack-affiliation {
+        color: #666;
+        font-size: 0.9rem;
+      }
+      
+      /* Stats */
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        margin: 3rem 0;
+      }
+      
+      .stat-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 20px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        border-top: 4px solid #ea580c;
+      }
+      
+      .stat-number {
+        font-size: 3rem;
+        font-weight: 800;
+        color: #ea580c;
+        margin-bottom: 0.5rem;
+      }
+      
+      .stat-label {
+        color: #666;
+        font-weight: 500;
+      }
+      
+      /* Responsive */
+      @media (max-width: 768px) {
+        .main-title {
+          font-size: 2.5rem;
+        }
+        
+        .tutorial-grid {
+          grid-template-columns: 1fr;
+        }
+        
+        .button-group {
+          flex-direction: column;
+          align-items: center;
+        }
+        
+        .event-info {
+          flex-direction: column;
+          gap: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <div class="header">
+      <div class="container">
+        <div class="logo">LR</div>
+        <h1 class="main-title">Low Rank Strikes Back</h1>
+        <p class="subtitle">in Modern Foundation Models</p>
+        
+        <div class="speaker-info">
+          <div class="speaker-name">Prof. Zhangyang "Atlas" Wang</div>
+          <div class="speaker-details">
+            Temple Foundation Endowed Associate Professor #7<br>
+            VITA Group, University of Texas at Austin<br>
+            Research Director, XTX Markets
+          </div>
+          
+          <div class="event-info">
+            <div class="event-item">
+              <div class="event-label">Date</div>
+              <div class="event-value">July 2025</div>
+            </div>
+            <div class="event-item">
+              <div class="event-label">Location</div>
+              <div class="event-value">Porto, Portugal</div>
+            </div>
+            <div class="event-item">
+              <div class="event-label">Duration</div>
+              <div class="event-value">5 Hours</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <!-- Description -->
+      <p class="description">
+        A comprehensive tutorial exploring the growing importance of low-rank approximation techniques in the context of large language models (LLMs). The session covers theoretical foundations, empirical observations, and practical applications of low-rank structures to enhance efficiency, interpretability, and robustness in LLMs.
+      </p>
+
+      <!-- Buttons -->
+      <div class="button-group">
+        <a href="#tutorial-sections" class="btn btn-primary">📚 Explore Tutorial</a>
+        <a href="https://www.dropbox.com/scl/fi/0p89wk45k3d5pvl58cpvg/LowRank_5hour_2025.pdf?rlkey=8aukb5ydncpotc7h0exqh7gfw&dl=0" class="btn btn-secondary">⬇️ Download Slides</a>
+      </div>
+
+
+      <!-- Tutorial Sections -->
+      <section class="section" id="tutorial-sections">
+        <h2 class="section-title">Tutorial Sections</h2>
+        <p class="section-subtitle">
+          Explore the actual structure of the tutorial based on the slide content, covering low-rank techniques from theoretical foundations to cutting-edge applications.
+        </p>
+
+        <div class="tutorial-grid">
+          <div class="tutorial-card">
+            <div class="tutorial-number">1</div>
+            <h3 class="tutorial-title">Introduction & Foundations</h3>
+            <p class="tutorial-subtitle">Pursuing low-dimensional structures in high-dimensional data: a universal quest over centuries, from sparsity to low rank</p>
+            <p class="tutorial-description"></p>
+            <div class="tutorial-topics">
+              <div class="topics-label">Key Topics:</div>
+              <div class="topic-tags">
+                <span class="topic-tag">Universal Quest</span>
+                <span class="topic-tag">Sparsity to Low Rank</span>
+                <span class="topic-tag">SVD & Rank Theory</span>
+                <span class="topic-tag">Curse & Blessing of Dimensionality</span>
+                <span class="topic-tag">Low-Rank Simplicity Bias</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="tutorial-card">
+            <div class="tutorial-number">2</div>
+            <h3 class="tutorial-title">Low Rank Gradients</h3>
+            <p class="tutorial-subtitle">LoRA, GaLore, and More</p>
+            <p class="tutorial-description">Low rank gradients (or weight updates) in foundation models, focusing on memory-efficient training techniques</p>
+            <div class="tutorial-topics">
+              <div class="topics-label">Key Topics:</div>
+              <div class="topic-tags">
+                <span class="topic-tag">Memory Requirements</span>
+                <span class="topic-tag">System vs Algorithm Level</span>
+                <span class="topic-tag">GaLore Projection</span>
+                <span class="topic-tag">Q-GaLore</span>
+                <span class="topic-tag">APOLLO Optimizer</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="tutorial-card">
+            <div class="tutorial-number">3</div>
+            <h3 class="tutorial-title">Low Rank Weight</h3>
+            <p class="tutorial-subtitle">Novel model compression & PEFT</p>
+            <p class="tutorial-description">How low-rank gradients lead to low-rank weights and enable novel model compression and parameter-efficient fine-tuning</p>
+            <div class="tutorial-topics">
+              <div class="topics-label">Key Topics:</div>
+              <div class="topic-tags">
+                <span class="topic-tag">Gradient-Weight Connection</span>
+                <span class="topic-tag">Model Compression</span>
+                <span class="topic-tag">PEFT Applications</span>
+                <span class="topic-tag">Weight Structure Analysis</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="tutorial-card">
+            <div class="tutorial-number">4</div>
+            <h3 class="tutorial-title">Low Rank Attention</h3>
+            <p class="tutorial-subtitle">Efficiency and safety applications</p>
+            <p class="tutorial-description">Low rank attention and neuron subspace with applications to efficiency and safety in large language models</p>
+            <div class="tutorial-topics">
+              <div class="topics-label">Key Topics:</div>
+              <div class="topic-tags">
+                <span class="topic-tag">Attention Bottleneck</span>
+                <span class="topic-tag">Approximate Low-Rank</span>
+                <span class="topic-tag">Efficiency Applications</span>
+                <span class="topic-tag">Safety Implications</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="tutorial-card">
+            <div class="tutorial-number">5</div>
+            <h3 class="tutorial-title">Going Beyond Low Rank</h3>
+            <p class="tutorial-subtitle">Vector space to measure space</p>
+            <p class="tutorial-description">Moving beyond traditional low-rank approaches: from vector space to measure space and understanding reasoning</p>
+            <div class="tutorial-topics">
+              <div class="topics-label">Key Topics:</div>
+              <div class="topic-tags">
+                <span class="topic-tag">Beyond Low-Rank</span>
+                <span class="topic-tag">Vector to Measure Space</span>
+                <span class="topic-tag">Reasoning Understanding</span>
+                <span class="topic-tag">Advanced Applications</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Key Techniques -->
+      <section class="section techniques-section">
+        <h2 class="section-title">Key Techniques Covered</h2>
+        <p class="section-subtitle">
+          Based on the key references from the tutorial slides, covering foundational papers and cutting-edge research with direct links to the original publications.
+        </p>
+
+        <!-- Overview -->
+        <div class="technique-category">
+          <div class="category-header">
+            <div class="category-icon">📚</div>
+            <div class="category-title">Overview</div>
+          </div>
+
+          <div class="paper-card">
+            <h4 class="paper-title">High-Dimensional Data Analysis with Low-Dimensional Models: Principles, Computation, and Applications</h4>
+            <div class="paper-meta">
+              <span class="paper-authors">Wright & Ma</span>
+              <span class="paper-year">Cambridge University Press 2022</span>
+            </div>
+            <a href="https://book-wright-ma.github.io/" class="paper-link">📖 Read Paper</a>
+          </div>
+
+          <div class="paper-card">
+            <h4 class="paper-title">An Overview of Low-Rank Structures in the Training and Adaptation of Large Models</h4>
+            <div class="paper-meta">
+              <span class="paper-authors">Balzano et al.</span>
+              <span class="paper-year">submitted to IEEE Signal Processing Magazine 2025</span>
+            </div>
+            <a href="https://arxiv.org/abs/2503.19859" class="paper-link">📄 Read Paper</a>
+          </div>
+
+          <div class="paper-card">
+            <h4 class="paper-title">The Low-Rank Simplicity Bias in Deep Networks</h4>
+            <div class="paper-meta">
+              <span class="paper-authors">Huh et al.</span>
+              <span class="paper-year">TMLR 2023</span>
+            </div>
+            <a href="https://arxiv.org/abs/2103.10427" class="paper-link">📄 Read Paper</a>
+          </div>
+        </div>
+
+        <!-- Part I: Gradients -->
+        <div class="technique-category">
+          <div class="category-header" style="background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);">
+            <div class="category-icon">🔄</div>
+            <div class="category-title">Part I: Gradients</div>
+          </div>
+
+          <div class="paper-card">
+            <h4 class="paper-title">LoRA: Low-Rank Adaptation of Large Language Models</h4>
+            <div class="paper-meta">
+              <span class="paper-authors">Hu et al.</span>
+              <span class="paper-year">ICLR 2022</span>
+            </div>
+            <a href="https://arxiv.org/abs/2106.09685" class="paper-link">📄 Read Paper</a>
+          </div>
+
+          <div class="paper-card">
+            <h4 class="paper-title">GaLore: Memory-Efficient LLM Training by Gradient Low-Rank Projection</h4>
+            <div class="paper-meta">
+              <span class="paper-authors">Zhao et al.</span>
+              <span class="paper-year">ICML 2024</span>
+            </div>
+            <a href="https://arxiv.org/abs/2403.03507" class="paper-link">📄 Read Paper</a>
+          </div>
+
+          <div class="paper-card">
+            <h4 class="paper-title">APOLLO: SGD-like Memory AdamW-level Performance</h4>
+            <div class="paper-meta">
+              <span class="paper-authors">Zhu et al.</span>
+              <span class="paper-year">MLSys 2025</span>
+            </div>
+            <a href="https://arxiv.org/abs/2412.05270" class="paper-link">📄 Read Paper</a>
+          </div>
+        </div>
+
+        <!-- Part II: Weights -->
+        <div class="technique-category">
+          <div class="category-header" style="background: linear-gradient(135deg, #059669 0%, #047857 100%);">
+            <div class="category-icon">⚖️</div>
+            <div class="category-title">Part II: Weights</div>
+          </div>
+
+          <div class="paper-card">
+            <h4 class="paper-title">From Low Rank Gradient Subspace Stabilization to Low-Rank Weights: Observations, Theories, and Applications</h4>
+            <div class="paper-meta">
+              <span class="paper-authors">Jaiswal et al.</span>
+              <span class="paper-year">ICML 2025</span>
+            </div>
+            <a href="https://openreview.net/pdf?id=fsf7LhbYdf" class="paper-link">📄 Read Paper</a>
+          </div>
+        </div>
+
+        <!-- Part III: Attention -->
+        <div class="technique-category">
+          <div class="category-header" style="background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);">
+            <div class="category-icon">🎯</div>
+            <div class="category-title">Part III: Attention</div>
+          </div>
+
+          <div class="paper-card">
+            <h4 class="paper-title">Linformer: Self-Attention with Linear Complexity</h4>
+            <div class="paper-meta">
+              <span class="paper-authors">Wang et al.</span>
+              <span class="paper-year">arXiv 2020</span>
+            </div>
+            <a href="https://arxiv.org/abs/2006.04768" class="paper-link">📄 Read Paper</a>
+          </div>
+
+          <div class="paper-card">
+            <h4 class="paper-title">Assessing the Brittleness of Safety Alignment via Pruning and Low-Rank Modifications</h4>
+            <div class="paper-meta">
+              <span class="paper-authors">Wei et al.</span>
+              <span class="paper-year">ICML 2024</span>
+            </div>
+            <a href="https://arxiv.org/abs/2402.05162" class="paper-link">📄 Read Paper</a>
+          </div>
+
+          <div class="paper-card">
+            <h4 class="paper-title">LoX: Low-Rank Extrapolation Robustifies LLM Safety Against Fine-tuning</h4>
+            <div class="paper-meta">
+              <span class="paper-authors">Perin et al.</span>
+              <span class="paper-year">COLM 2025</span>
+            </div>
+            <a href="https://arxiv.org/abs/2506.15606" class="paper-link">📄 Read Paper</a>
+          </div>
+        </div>
+      </section>
+
+              <!-- Part IV: Beyond Low Rank -->
+        <div class="technique-category">
+          <div class="category-header" style="background: linear-gradient(135deg, #059669 0%, #047857 100%);">
+            <div class="category-icon">⚖️</div>
+            <div class="category-title">Part IV: Beyond Low Rank </div>
+          </div>
+
+          <div class="paper-card">
+            <h4 class="paper-title">Why Neural Network Can Discover Symbolic Structures with Gradient-based Training: An Algebraic and Geometric Foundation for Neurosymbolic Reasoning</h4>
+            <div class="paper-meta">
+              <span class="paper-authors">Wang & Wang</span>
+              <span class="paper-year">NeuS 2025</span>
+            </div>
+            <a href="https://arxiv.org/abs/2506.21797" class="paper-link">📄 Read Paper</a>
+          </div>
+        </div>
+
+      <!-- Acknowledgements -->
+      <section class="acknowledgements">
+        <h2 class="ack-title">Acknowledgements</h2>
+        <p style="margin-bottom: 2rem; color: #666;">Special thanks to the following researchers for sharing their slides and materials that are reused in this tutorial:</p>
+        
+        <div class="ack-grid">
+          <div class="ack-person">
+            <div class="ack-name">Ajay Jaiswal</div>
+            <div class="ack-affiliation">UT Austin</div>
+          </div>
+          <div class="ack-person">
+            <div class="ack-name">Peihao Wang</div>
+            <div class="ack-affiliation">UT Austin</div>
+          </div>
+          <div class="ack-person">
+            <div class="ack-name">Yifan Wang</div>
+            <div class="ack-affiliation">Purdue</div>
+          </div>
+          <div class="ack-person">
+            <div class="ack-name">Boyi Wei</div>
+            <div class="ack-affiliation">Princeton</div>
+          </div>
+          <div class="ack-person">
+            <div class="ack-name">John Wright</div>
+            <div class="ack-affiliation">Columbia</div>
+          </div>
+          <div class="ack-person">
+            <div class="ack-name">Jiawei Zhao</div>
+            <div class="ack-affiliation">Meta</div>
+          </div>
+          <div class="ack-person">
+            <div class="ack-name">Zhenyu Zhang</div>
+            <div class="ack-affiliation">UT Austin</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Stats -->
+      <div class="stats">
+        <div class="stat-card">
+          <div class="stat-number">150+</div>
+          <div class="stat-label">Total Slides</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">5</div>
+          <div class="stat-label">Main Sections</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">5</div>
+          <div class="stat-label">Hours Content</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">10+</div>
+          <div class="stat-label">Key References</div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Simple smooth scrolling for anchor links
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            target.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
+
